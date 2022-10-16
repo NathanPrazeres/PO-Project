@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-
+import java.io.ObjectOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 
 import prr.exceptions.ImportFileException;
 import prr.exceptions.MissingFileAssociationException;
@@ -19,6 +21,8 @@ import prr.exceptions.UnrecognizedEntryException;
  * Manage access to network and implement load/save operations.
  */
 public class NetworkManager {
+
+	private String _filename = null;
 
 	/** The network itself. */
 	private Network _network = new Network();
@@ -38,6 +42,7 @@ public class NetworkManager {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
 			_network = (Network) ois.readObject();
+			_filename = filename;
 			ois.close();
 		} catch (FileNotFoundException e) {
 			throw new UnavailableFileException(filename);
@@ -56,7 +61,17 @@ public class NetworkManager {
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
 	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
-		//FIXME implement serialization method
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+			oos.writeObject(_network);
+			oos.close();
+		} catch (FileNotFoundException e) {
+			throw new FileNotFoundException();
+		} catch (MissingFileAssociationException e) {
+			throw new MissingFileAssociationException();
+		} catch (IOException e) {
+			throw new IOException();
+		}
 	}
 
 	/**
@@ -69,7 +84,18 @@ public class NetworkManager {
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
 	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-		//FIXME implement serialization method
+		try {
+			ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+			oos.writeObject(_network);
+			_filename = filename;
+			oos.close();
+		} catch (FileNotFoundException e) {
+			throw new FileNotFoundException();
+		} catch (MissingFileAssociationException e) {
+			throw new MissingFileAssociationException();
+		} catch (IOException e) {
+			throw new IOException();
+		}
 	}
 
 	/**
