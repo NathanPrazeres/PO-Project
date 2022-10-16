@@ -7,6 +7,9 @@ import prr.exceptions.UnrecognizedEntryException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
 /**
@@ -17,6 +20,9 @@ public class Network implements Serializable {
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
 
+	private int totalComms = 0;
+	private Map<String, Client> clients = new TreeMap<String, Client>();
+	private Map<String, Terminal> terminals = new TreeMap<String, Terminal>();
         // FIXME define attributes
         // FIXME define contructor(s)
         // FIXME define methods

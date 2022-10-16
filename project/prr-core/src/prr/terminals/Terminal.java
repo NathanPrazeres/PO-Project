@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -17,10 +17,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
 
-    private String _state = "Idle";
+    private String _state = "IDLE";
     private String _id;
     private int _balance = 0;
-    private Map<String, Terminal> _friends = new HashMap<>();
+    private Map<String, Terminal> _friends = new TreeMap<>();
     private List<Integer> _paid = new ArrayList<>();
     private List<Integer> _owed = new ArrayList<>();
     private List<Communication> _receivedCommunications = new ArrayList<>();
@@ -66,12 +66,12 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     public abstract boolean canStartCommunication();
 
     public void updateBalance() {
-        int newBalance = _balance;
+        int newBalance = 0;
         for (Integer p: paid) {
-                newBalance += p;
+            newBalance += p;
         }
         for (Integer o: owed) {
-                newBalance -= o;
+            newBalance -= o;
         }
         _balance = newBalance;
     }
@@ -82,7 +82,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     public Tariff communicationEnded(int price, Tariff t) {
         _owed.add(price);
-        _updateBalance();
+        this.updateBalance();
         if (_balance < 0 && !(t instanceof Normal)) {
             t = new Normal();
         }
@@ -115,12 +115,33 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     public void startCommunication(String type, Terminal receiver) {
-        if (_canStartCommunication()) {
-            _setState("Busy");
-            Communication communication = new Communication(type, _getId(), receiver.getId());
+        if (this.canStartCommunication()) {
+            this.setState("BUSY");
+            receiver.setState("BUSY");
+            Communication communication = new Communication(type, this.getId(), receiver.getId());
             _owed.add(communication.getPrice());
             _sentCommunications.add(communication);
             receiver.receivedCommunications.add(communication);
         }
+    }
+
+    public void endCurrentCommunication() {
+        if (this.canEndCurrentCommunication()) {
+            this.setState("IDLE");
+            for (Communication c: _receivedCommunications) {
+                if (c.getState() == "ACTIVE") {
+                    c.setState("ENDED");
+                    c.getSender().communicationEnded(c.getPrice(), _tariff);
+                }
+            }
+        }
+    }
+
+    public void turnOff() {
+        this.setState("OFF");
+    }
+
+    public void turnOn() {
+        this.setState("IDLE");
     }
 }
