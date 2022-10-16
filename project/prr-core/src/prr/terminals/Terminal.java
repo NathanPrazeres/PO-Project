@@ -42,10 +42,6 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         return _state;
     }
 
-    public void setState(String state) {
-        _state = state;
-    }
-
     public String getId() {
         return _id;
     }
@@ -87,7 +83,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
             t = new Normal();
         }
         if (t instanceof Gold) {
-            if  (communication.type == "VIDEO") {
+            if  (communication.getType() == "VIDEO") {
                 t.inc();
                 if (t.consecutive == 5) {
                     _tariff = new Platinum();
@@ -96,7 +92,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
             _tariff.interrupt();
         }
         else if (_tariff instanceof Platinum) {
-            if  (communication.type == "SMS") {
+            if  (communication.getType() == "SMS") {
                 _tariff.inc();
                 if (_tariff.consecutive == 2) {
                     _tariff = new Gold();
@@ -116,8 +112,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     public void startCommunication(String type, Terminal receiver) {
         if (this.canStartCommunication()) {
-            this.setState("BUSY");
-            receiver.setState("BUSY");
+            this.busy();
+            receiver.busy();
             Communication communication = new Communication(type, this.getId(), receiver.getId());
             _owed.add(communication.getPrice());
             _sentCommunications.add(communication);
@@ -125,23 +121,26 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         }
     }
 
-    public void endCurrentCommunication() {
+    public void endCurrentCommunication(Terminal receiver) {
         if (this.canEndCurrentCommunication()) {
-            this.setState("IDLE");
-            for (Communication c: _receivedCommunications) {
-                if (c.getState() == "ACTIVE") {
-                    c.setState("ENDED");
-                    c.getSender().communicationEnded(c.getPrice(), _tariff);
-                }
-            }
+            this.idle();
+            receiver.idle();
         }
     }
 
-    public void turnOff() {
+    public void off() {
         this.setState("OFF");
     }
 
-    public void turnOn() {
+    public void idle() {
         this.setState("IDLE");
+    }
+
+    public void silent() {
+        this.setState("SILENT");
+    }
+
+    public void busy() {
+        this.setState("BUSY");
     }
 }
