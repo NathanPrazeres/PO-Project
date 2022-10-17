@@ -1,7 +1,5 @@
 package prr.clients;
 
-import java.io.Serializable;
-
 import prr.terminals.Communication;
 import prr.terminals.Terminal;
 import java.util.Map;
@@ -36,6 +34,13 @@ public class Client implements Serializable {
         _nif = nif;
     }
 
+    public void addTerminal(Terminal t) {
+        _terminals.put(t.getId(), t);
+    }
+
+    public String getId() {
+        return _id;
+    }
 
     public void changeTariff(Tariff newTariff) {
         _tariff = newTariff;

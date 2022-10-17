@@ -15,11 +15,16 @@ class DoRegisterTerminal extends Command<Network> {
 
 	DoRegisterTerminal(Network receiver) {
 		super(Label.REGISTER_TERMINAL, receiver);
-		//FIXME add command fields
+		addStringField("terminalId", Prompt.terminalId());
+		addOptionalField("terminalType", Prompt.terminalType(), "BASIC", "FANCY");
+		addStringField("clientId", Prompt.clientId());
 	}
 
 	@Override
 	protected final void execute() throws CommandException {
-                //FIXME implement command
+        _receiver.registerTerminal(
+			optionalField("terminalType"),
+			stringField("terminalId"),
+			stringField("clientId"));
 	}
 }

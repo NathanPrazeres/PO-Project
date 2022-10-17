@@ -17,34 +17,62 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
 
-    private String _state = "IDLE";
     private String _id;
+    private String _clientId;
+    private String _state = "IDLE";
     private int _balance = 0;
     private Map<String, Terminal> _friends = new TreeMap<>();
     private List<Integer> _paid = new ArrayList<>();
     private List<Integer> _owed = new ArrayList<>();
     private List<Communication> _receivedCommunications = new ArrayList<>();
     private List<Communication> _sentCommunications = new ArrayList<>();
+    private Tariff _tariff = new Normal();
 
         // FIXME define attributes
         // FIXME define contructor(s)
         // FIXME define methods
 
-    public Terminal(String id) {
+    public Terminal(String id, String clientId) {
         _id = id;
+        _clientId = clientId;
         paid.add(0);
         owed.add(0);
     }
+ // order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
+    public abstract String getType();
 
-
+    public String getId() {
+        return _id;
+    }
 
     public String getState() {
         return _state;
     }
 
-    public String getId() {
-        return _id;
+    public String getClientId() {
+        return _clientId;
     }
+
+    public String getBalacePaid() {
+        int paid = 0;
+        for (Integer i : _paid) {
+            paid += i;
+        }
+        return String.valueOf(paid);
+    }
+
+    public String getBalaceOwed() {
+        int owed = 0;
+        for (Integer i : _owed) {
+            owed += i;
+        }
+        return String.valueOf(owed);
+    }
+
+    public void setState(String state) {
+        _state = state;
+    }
+
     
     /**
      * Checks if this terminal can end the current interactive communication.
@@ -52,21 +80,21 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         * @return true if this terminal is busy (i.e., it has an active interactive communication) and
         *          it was the originator of this communication.
         **/
-    public abstract boolean canEndCurrentCommunication();
+    public abstract boolean canEndCurrentCommunication(Communication communication);
 
     /**
      * Checks if this terminal can start a new communication.
         *
         * @return true if this terminal is neither off neither busy, false otherwise.
         **/
-    public abstract boolean canStartCommunication();
+    public abstract boolean canStartCommunication(String type);
 
     public void updateBalance() {
         int newBalance = 0;
-        for (Integer p: paid) {
+        for (Integer p: _paid) {
             newBalance += p;
         }
-        for (Integer o: owed) {
+        for (Integer o: _owed) {
             newBalance -= o;
         }
         _balance = newBalance;
@@ -76,12 +104,9 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         return _balance;
     }
 
-    public Tariff communicationEnded(int price, Tariff t) {
+    public void communicationEnded(int price, Tariff t) {
         _owed.add(price);
         this.updateBalance();
-        if (_balance < 0 && !(t instanceof Normal)) {
-            t = new Normal();
-        }
         if (t instanceof Gold) {
             if  (communication.getType() == "VIDEO") {
                 t.inc();
@@ -100,6 +125,9 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
             }
             t.interrupt();
         }
+        if (_balance < 0 && !(t instanceof Normal)) {
+            _tariff = new Normal();
+        }
     }
 
     public void addFriend(Terminal friend) {
@@ -111,10 +139,10 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     public void startCommunication(String type, Terminal receiver) {
-        if (this.canStartCommunication()) {
-            this.busy();
+        if (canStartCommunication()) {
+            busy();
             receiver.busy();
-            Communication communication = new Communication(type, this.getId(), receiver.getId());
+            Communication communication = new Communication(type, getId(), receiver.getId());
             _owed.add(communication.getPrice());
             _sentCommunications.add(communication);
             receiver.receivedCommunications.add(communication);
@@ -122,25 +150,25 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     public void endCurrentCommunication(Terminal receiver) {
-        if (this.canEndCurrentCommunication()) {
-            this.idle();
+        if (canEndCurrentCommunication()) {
+            idle();
             receiver.idle();
         }
     }
 
     public void off() {
-        this.setState("OFF");
+        setState("OFF");
     }
 
     public void idle() {
-        this.setState("IDLE");
+        setState("IDLE");
     }
 
-    public void silent() {
-        this.setState("SILENT");
+    public void silence() {
+        setState("SILENCE");
     }
 
     public void busy() {
-        this.setState("BUSY");
+        setState("BUSY");
     }
 }
