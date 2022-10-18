@@ -7,8 +7,8 @@ public class Notification {
     private Terminal _idTerminal;
 
     public Notification(String type, Terminal idTerminal) {
-        this.type = type;
-        this.idTerminal = idTerminal;
+        _type = type;
+        _idTerminal = idTerminal;
     }
 
     

@@ -40,12 +40,16 @@ public class Network implements Serializable {
 		_clients.put(id, new Client(id, name, nif));
 	}
 
-	public void registerTerminal(String type, String id, String clientId) throws InvalidTerminalKeyException, DuplicateTerminalKeyException {
+	public void registerTerminal(String type, String id, String clientId) throws 
+			InvalidTerminalKeyException, DuplicateTerminalKeyException, UnknownClientKeyException {
 		if (_terminals.containsKey(id)) {
 			throw new DuplicateTerminalKeyException(id);
 		}
 		if (id.length() != 6 || !id.matches("[^0-9]+")) {
 			throw new InvalidTerminalKeyException(id);
+		}
+		if (!_clients.containsKey(clientId)) {
+			throw new UnknownClientKeyException(clientId);
 		}
 		Terminal terminal;
 		if (type.equals("BASIC")) {
@@ -106,15 +110,9 @@ public class Network implements Serializable {
 		String type = fields[0];
 		String id = fields[1];
 		String idClient = fields[2];
-		Terminal terminal;
-		if (type.equals("BASIC")) {
-			terminal = new Basic(id, idClient);
-		}
-		else {
-			terminal = new Fancy(id, idClient);
-		}
-		terminal.setState(fields[3]);
-		_terminals.put(id, terminal);
+
+		registerTerminal(type, id, idClient);
+		_terminals.get(id).setState(fields[3]);
 	}
 
 	// FRIENDS|id|id1,...,idn
