@@ -1,5 +1,9 @@
 package prr.clients;
 
+import java.lang.Iterable;
+import java.io.Serializable;
+
+
 import prr.terminals.Communication;
 import prr.terminals.Terminal;
 import java.util.Map;
@@ -11,7 +15,7 @@ import prr.tariff.Normal;
 import prr.tariff.Gold;
 import prr.tariff.Platinum;
 
-public class Client implements Serializable {
+public class Client implements Serializable, Iterable {
 
     private static final long serialVersionUID = 202208091753L;
 
@@ -22,9 +26,10 @@ public class Client implements Serializable {
     private Map<String, Terminal> _terminals = new TreeMap<>();
     private List<Integer> _paid = new ArrayList<>();
     private List<Integer> _owed = new ArrayList<>();
-    private List<Communication> _sentCommunications = new ArrayList<>();
+    /* private List<Communication> _sentCommunications = new ArrayList<>();
     private List<Communication> _receivedCommunications = new ArrayList<>();
-    private List<Notification> _notifications = new ArrayList<>();
+    private List<Notification> _notifications = new ArrayList<>(); */
+    private boolean _notifActive = true;
     private int _balance = 0;
 
 
@@ -34,12 +39,31 @@ public class Client implements Serializable {
         _nif = nif;
     }
 
-    public void addTerminal(Terminal t) {
-        _terminals.put(t.getId(), t);
-    }
-
     public String getId() {
         return _id;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public int getNif() {
+        return _nif;
+    }
+
+    public String getType() {
+        return _tariff.getType();
+    }
+
+    public String getNotifActive() {
+        if (_notifActive) {
+            return "YES";
+        }
+        return "NO";
+    }
+
+    public void addTerminal(Terminal t) {
+        _terminals.put(t.getId(), t);
     }
 
     public void changeTariff(Tariff newTariff) {
@@ -56,8 +80,33 @@ public class Client implements Serializable {
         _balance -= price;
     }
 
-    public void readNotifications() {
-        // show notifications;
-        // notifications.clear();
+    public int totalPaid() {
+        int paid = 0;
+        for (int i : _paid) {
+            paid += i;
+        }
+        return paid;
     }
+
+    public int totalOwed() {
+        int owed = 0;
+        for (int i : _owed) {
+            owed += i;
+        }
+        return owed;
+    }
+
+    @Override
+    public String toString() {
+        return getId() + "|" + getName() + "|" + String.valueOf(getNif()) + "|" + getType() + "|" + getNotifActive() + "|" + _terminals.size() + "|" + String.valueOf(totalPaid()) + "|" + String.valueOf(totalOwed());
+    }
+
+    /* public String readNotifications() {
+        String notifications = "";
+        for (Notification n : _notifications) {
+            notifications += n.toString();
+        }
+        _notifications.clear();
+        return notifications;
+    } */
 }

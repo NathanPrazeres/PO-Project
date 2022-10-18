@@ -3,6 +3,11 @@ package prr.tariffs;
 public class Platinum extends Tariff {
     private int _consecutive = 0;
     
+    @Override
+    public String getType() {
+        return "PLATINUM";
+    }
+
     public void addCons() {
         _consecutive += 1;
     }

@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import prr.clients.Client;
 import prr.exceptions.UnrecognizedEntryException;
+import prr.exceptions.DuplicateClientKeyException;
+import prr.exceptions.DuplicateTerminalKeyException;
+import prr.exceptions.UnknownClientKeyException;
 import prr.terminals.Terminal;
 
 import java.io.FileReader;
@@ -13,17 +16,18 @@ import java.util.DuplicateFormatFlagsException;
 import java.util.Map;
 import java.util.TreeMap;
 
+
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
 /**
- * Class Store implements a store.
+ * Class Network implements a network.
  */
 public class Network implements Serializable {
 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
 
-	private int _totalComms = 0;
+	/* private int _totalComms = 0; */
 	private Map<String, Client> _clients = new TreeMap<String, Client>();
 	private Map<String, Terminal> _terminals = new TreeMap<String, Terminal>();
         // FIXME define attributes
@@ -31,7 +35,6 @@ public class Network implements Serializable {
         // FIXME define methods
 
 
-	
 
 	public void registerClient(String id, String name, int nif) throws DuplicateClientKeyException {
 		if (_clients.containsKey(id)) {
@@ -110,13 +113,22 @@ public class Network implements Serializable {
 	}
 
 	// FRIENDS|id|id1,...,idn
-	public void readFriends(String[] fields) {
+	public void readFriends(String[] fields) throws UnknownTerminalKeyException {
 		checkFieldsLength(fields, 3);
 		try {
 			String id = fields[1];
 			String[] friends = fields[2].split(",");
+			if (!_terminals.containsKey(id)) {
+				throw new UnknownTerminalKeyException(id);
+			}
 			for (String friend : friends) {
-				_terminals.get(id).addFriend(_terminals.get(friend));
+				if (!_terminals.containsKey(friend)) {
+					throw new UnknownTerminalKeyException(friend);
+				}
+				else {
+					_terminals.get(id).addFriend(_terminals.get(friend));
+					_terminals.get(friend).addFriend(_terminals.get(id));
+				}
 			}
 		}
 		catch (OtherException e) {
@@ -130,19 +142,36 @@ public class Network implements Serializable {
 		}
 	}
 
+
+	public String showClient(Client client) {
+		return client.toString()/*  + "\n" + client.readNotifications() */;
+	}
+
+	//Function to get a string with all the clients
+	public String showAllClients() {
+		String result = "";
+		for (Client client : _clients.values()) {
+			result += client.toString();
+			result = result.substring(0, result.length() - 1);
+		}
+		return result;
+	}
+
+
+
 	//Function to get a string with all the terminals
 	public String showAllTerminals() {
 		String result = "";
 		for (Terminal terminal : _terminals.values()) {
 		//order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
-			result += terminal.getType() + "|" + terminal.getId() + "|" + terminal.getClientId() + "|" + terminal.getState() + "|" + terminal.getBalancePaid() + "|" + terminal.getBalanceDebts();
+			result += terminal.toString();
 			if (terminal.getFriends().size() > 0) {
 				result += "|";
 				for (Terminal friend : terminal.getFriends()) {
 					result += friend.getId() + ",";
 				}
-				result = result.substring(0, result.length() - 1);
 			}
+			result = result.substring(0, result.length() - 1);
 		}
 		return result;
 	}

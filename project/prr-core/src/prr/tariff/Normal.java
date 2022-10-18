@@ -1,6 +1,11 @@
 package prr.tariffs;
 
 public class Normal extends Tariff {
+    @Override
+    public String getType() {
+        return "NORMAL";
+    }
+
     public int text(int N) {
         if (N < 50) {
             return 10;

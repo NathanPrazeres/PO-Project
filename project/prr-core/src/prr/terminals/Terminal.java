@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import prr.clients.Client;
+
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
 /**
@@ -24,9 +26,8 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
     private Map<String, Terminal> _friends = new TreeMap<>();
     private List<Integer> _paid = new ArrayList<>();
     private List<Integer> _owed = new ArrayList<>();
-    private List<Communication> _receivedCommunications = new ArrayList<>();
-    private List<Communication> _sentCommunications = new ArrayList<>();
-    private Tariff _tariff = new Normal();
+    /* private List<Communication> _receivedCommunications = new ArrayList<>();
+    private List<Communication> _sentCommunications = new ArrayList<>(); */
 
         // FIXME define attributes
         // FIXME define contructor(s)
@@ -40,6 +41,12 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
     }
  // order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
     public abstract String getType();
+
+    @Override
+    public String toString() {
+        return getType() + "|" + getId() + "|" + getClientId() + "|" + 
+            getState() + "|" + getBalancePaid() + "|" + getBalanceDebts();
+    }
 
     public String getId() {
         return _id;
@@ -55,6 +62,14 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
 
     public Collection<Terminal> getFriends() {
         return _friends.values();
+    }
+
+    public void addFriend(Terminal friend) {
+        _friends.put(friend.getId(), friend);
+    }
+
+    public void removeFriend(String id) {
+        _friends.remove(id);
     }
 
     public String getBalacePaid() {
@@ -108,41 +123,35 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
         return _balance;
     }
 
-    public void communicationEnded(int price, Tariff t) {
+    /* public Tariff communicationEnded(Tariff t, int duration) {
+        int price = t.getPrice(duration);
         _owed.add(price);
         this.updateBalance();
         if (t instanceof Gold) {
             if  (communication.getType() == "VIDEO") {
                 t.inc();
                 if (t.consecutive == 5) {
-                    _tariff = new Platinum();
+                    t = new Platinum();
                 }
             }
-            _tariff.interrupt();
+            t.interrupt();
         }
-        else if (_tariff instanceof Platinum) {
+        else if (t instanceof Platinum) {
             if  (communication.getType() == "SMS") {
-                _tariff.inc();
-                if (_tariff.consecutive == 2) {
-                    _tariff = new Gold();
+                t.inc();
+                if (t.consecutive == 2) {
+                    t = new Gold();
                 }
             }
             t.interrupt();
         }
         if (_balance < 0 && !(t instanceof Normal)) {
-            _tariff = new Normal();
+            t = new Normal();
         }
-    }
+        return t;
+    } */
 
-    public void addFriend(Terminal friend) {
-        _friends.put(friend.getId(), friend);
-    }
-
-    public void removeFriend(String id) {
-        _friends.remove(id);
-    }
-
-    public void startCommunication(String type, Terminal receiver) {
+    /* public void startCommunication(String type, Terminal receiver) {
         if (canStartCommunication()) {
             busy();
             receiver.busy();
@@ -151,14 +160,14 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
             _sentCommunications.add(communication);
             receiver.receivedCommunications.add(communication);
         }
-    }
+    } */
 
-    public void endCurrentCommunication(Terminal receiver) {
+    /* public void endCurrentCommunication(Terminal receiver) {
         if (canEndCurrentCommunication()) {
             idle();
             receiver.idle();
         }
-    }
+    } */
 
     public void off() {
         setState("OFF");

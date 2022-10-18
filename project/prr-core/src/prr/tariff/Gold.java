@@ -2,6 +2,11 @@ package prr.tariffs;
 
 public class Gold extends Tariff {
     private int _consecutive = 0;
+
+    @Override
+    public String getType() {
+        return "GOLD";
+    }
     
     public void addCons() {
         _consecutive += 1;
