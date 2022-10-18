@@ -100,8 +100,7 @@ public class Network implements Serializable {
 		String id = fields[1];
 		String name = fields[2];
 		int nif = Integer.parseInt(fields[3]);
-		Client client = new Client(id, name, nif);
-		_clients.put(id, client);
+		registerClient(id, name, nif);
 	}
 
 	// terminal|id|idClient|state
