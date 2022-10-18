@@ -1,4 +1,4 @@
-package prr.tariffs;
+package prr.tariff;
 
 public class Normal extends Tariff {
     @Override

@@ -1,4 +1,4 @@
-package prr.tariffs;
+package prr.tariff;
 
 public abstract class Tariff {
     private boolean _ready = false;

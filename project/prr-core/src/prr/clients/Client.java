@@ -4,7 +4,7 @@ import java.lang.Iterable;
 import java.io.Serializable;
 
 
-import prr.terminals.Communication;
+//import prr.terminals.Communication;
 import prr.terminals.Terminal;
 import java.util.Map;
 import java.util.List;
@@ -15,7 +15,7 @@ import prr.tariff.Normal;
 import prr.tariff.Gold;
 import prr.tariff.Platinum;
 
-public class Client implements Serializable, Iterable {
+public class Client implements Serializable/*, Iterable*/ {
 
     private static final long serialVersionUID = 202208091753L;
 

@@ -2,7 +2,7 @@ package prr.terminals;
 
 public class Basic extends Terminal {
 
-    public Basic(String id, String state) {
+    public Basic(String id, String idClient) {
         super(id, idClient);
     }
 
@@ -12,18 +12,7 @@ public class Basic extends Terminal {
     }
 
     @Override
-    public boolean canEndCurrentCommunication(/* Communication communication */) {
-        /* if (this.getState().equals("BUSY") && communication.getOriginator().equals(this.getId())) {
-            return true;
-        } */
-        return false;
-    }
-
-    @Override
     public boolean canStartCommunication() {
-        /* if (this.getState().equals("IDLE") || this.getState().equals("BUSY")) {
-            return true;
-        } */
-        return false;
+        return true;
     }
 }

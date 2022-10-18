@@ -2,10 +2,12 @@ package prr.terminals;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
+
 
 import prr.clients.Client;
 
@@ -14,7 +16,7 @@ import prr.clients.Client;
 /**
  * Abstract terminal.
  */
-abstract public class Terminal implements Serializable, Iterable /* FIXME maybe addd more interfaces */{
+abstract public class Terminal implements Serializable /* FIXME maybe addd more interfaces */{
 
 	/** Serial number for serialization. */
 	private static final long serialVersionUID = 202208091753L;
@@ -36,8 +38,8 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
     public Terminal(String id, String clientId) {
         _id = id;
         _clientId = clientId;
-        paid.add(0);
-        owed.add(0);
+        _paid.add(0);
+        _owed.add(0);
     }
  // order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
     public abstract String getType();
@@ -45,7 +47,7 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
     @Override
     public String toString() {
         return getType() + "|" + getId() + "|" + getClientId() + "|" + 
-            getState() + "|" + getBalancePaid() + "|" + getBalanceDebts();
+            getState() + "|" + getBalancePaid() + "|" + getBalanceOwed();
     }
 
     public String getId() {
@@ -72,7 +74,7 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
         _friends.remove(id);
     }
 
-    public String getBalacePaid() {
+    public String getBalancePaid() {
         int paid = 0;
         for (Integer i : _paid) {
             paid += i;
@@ -80,7 +82,7 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
         return String.valueOf(paid);
     }
 
-    public String getBalaceOwed() {
+    public String getBalanceOwed() {
         int owed = 0;
         for (Integer i : _owed) {
             owed += i;
@@ -99,14 +101,14 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
         * @return true if this terminal is busy (i.e., it has an active interactive communication) and
         *          it was the originator of this communication.
         **/
-    public abstract boolean canEndCurrentCommunication(Communication communication);
+    //public abstract boolean canEndCurrentCommunication(Communication communication);
 
     /**
      * Checks if this terminal can start a new communication.
         *
         * @return true if this terminal is neither off neither busy, false otherwise.
         **/
-    public abstract boolean canStartCommunication(String type);
+    public abstract boolean canStartCommunication();
 
     public void updateBalance() {
         int newBalance = 0;
@@ -123,51 +125,6 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
         return _balance;
     }
 
-    /* public Tariff communicationEnded(Tariff t, int duration) {
-        int price = t.getPrice(duration);
-        _owed.add(price);
-        this.updateBalance();
-        if (t instanceof Gold) {
-            if  (communication.getType() == "VIDEO") {
-                t.inc();
-                if (t.consecutive == 5) {
-                    t = new Platinum();
-                }
-            }
-            t.interrupt();
-        }
-        else if (t instanceof Platinum) {
-            if  (communication.getType() == "SMS") {
-                t.inc();
-                if (t.consecutive == 2) {
-                    t = new Gold();
-                }
-            }
-            t.interrupt();
-        }
-        if (_balance < 0 && !(t instanceof Normal)) {
-            t = new Normal();
-        }
-        return t;
-    } */
-
-    /* public void startCommunication(String type, Terminal receiver) {
-        if (canStartCommunication()) {
-            busy();
-            receiver.busy();
-            Communication communication = new Communication(type, getId(), receiver.getId());
-            _owed.add(communication.getPrice());
-            _sentCommunications.add(communication);
-            receiver.receivedCommunications.add(communication);
-        }
-    } */
-
-    /* public void endCurrentCommunication(Terminal receiver) {
-        if (canEndCurrentCommunication()) {
-            idle();
-            receiver.idle();
-        }
-    } */
 
     public void off() {
         setState("OFF");
@@ -184,4 +141,6 @@ abstract public class Terminal implements Serializable, Iterable /* FIXME maybe 
     public void busy() {
         setState("BUSY");
     }
+
+
 }

@@ -3,18 +3,16 @@ package prr;
 import java.io.Serializable;
 import java.io.IOException;
 
+import prr.app.exceptions.UnknownTerminalKeyException;
 import prr.clients.Client;
-import prr.exceptions.UnrecognizedEntryException;
-import prr.exceptions.DuplicateClientKeyException;
-import prr.exceptions.DuplicateTerminalKeyException;
-import prr.exceptions.UnknownClientKeyException;
+import prr.exceptions.*;
+import prr.terminals.Basic;
+import prr.terminals.Fancy;
 import prr.terminals.Terminal;
 
 import java.io.FileReader;
 import java.io.BufferedReader;
-import java.util.DuplicateFormatFlagsException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
@@ -43,7 +41,7 @@ public class Network implements Serializable {
 		_clients.put(id, new Client(id, name, nif));
 	}
 
-	public void registerTerminal(String type, String id, String clientId) throws 
+	public void registerTerminal(String type, String id, String clientId) throws
 			InvalidTerminalKeyException, DuplicateTerminalKeyException, UnknownClientKeyException {
 		if (_terminals.containsKey(id)) {
 			throw new DuplicateTerminalKeyException(id);
@@ -72,11 +70,11 @@ public class Network implements Serializable {
      * @throws UnrecognizedEntryException if some entry is not correct
 	 * @throws IOException if there is an IO erro while processing the text file
 	 */
-	void importFile(String filename) throws UnrecognizedEntryException, IOException, ClassNotFoundException /* FIXME maybe other exceptions */  {
+	void importFile(String filename) throws UnrecognizedEntryException, IOException, ClassNotFoundException  {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				read(line);
+				readLine(line);
 			}
 		}
 		catch (IOException e) {
@@ -87,7 +85,7 @@ public class Network implements Serializable {
 		}
     }
 
-	public void read(String line) throws UnrecognizedEntryException {
+	public void readLine(String line) throws UnrecognizedEntryException, UnknownTerminalKeyException, DuplicateTerminalKeyException, InvalidTerminalKeyException, UnknownClientKeyException {
 		String[] fields = line.split("\\|");
 		switch(fields[0]) {
 			case "CLIENT" -> readClient(fields);
@@ -98,14 +96,20 @@ public class Network implements Serializable {
 	}
 
 	// CLIENT|id|name|nif
-	public void readClient(String[] fields) {
-		checkFieldsLength(fields, 4);
-		
-		registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
+	public void readClient(String[] fields) throws UnrecognizedEntryException {
+		try {
+			checkFieldsLength(fields, 4);
+		}
+		catch (UnrecognizedEntryException e) {}
+
+		try {
+			registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
+		}
+		catch (DuplicateClientKeyException e) {}
 	}
 
 	// terminal|id|idClient|state
-	public void readTerminal(String[] fields) {
+	public void readTerminal(String[] fields) throws UnrecognizedEntryException, DuplicateTerminalKeyException, InvalidTerminalKeyException, UnknownClientKeyException {
 		checkFieldsLength(fields, 4);
 
 		registerTerminal(fields[0], fields[1], fields[2]);
@@ -113,7 +117,7 @@ public class Network implements Serializable {
 	}
 
 	// FRIENDS|id|id1,...,idn
-	public void readFriends(String[] fields) throws UnknownTerminalKeyException {
+	public void readFriends(String[] fields) throws UnknownTerminalKeyException, UnrecognizedEntryException {
 		checkFieldsLength(fields, 3);
 		try {
 			String id = fields[1];
@@ -131,14 +135,14 @@ public class Network implements Serializable {
 				}
 			}
 		}
-		catch (OtherException e) {
-			throw new UnrecognizedEntryException();
+		catch (UnknownTerminalKeyException e) {
+			throw new UnrecognizedEntryException(Arrays.toString(fields));
 		}
 	}
 
 	public void checkFieldsLength(String[] fields, int length) throws UnrecognizedEntryException {
 		if (fields.length != length) {
-			throw new UnrecognizedEntryException();
+			throw new UnrecognizedEntryException(Arrays.toString(fields));
 		}
 	}
 

@@ -1,4 +1,4 @@
-package prr.tariffs;
+package prr.tariff;
 
 public class Gold extends Tariff {
     private int _consecutive = 0;
@@ -21,7 +21,7 @@ public class Gold extends Tariff {
     }
 
     public int text(int N) {
-        resetCons();
+        //resetCons();
         if (N < 50) {
             return 10;
         }
@@ -32,7 +32,7 @@ public class Gold extends Tariff {
     }
 
     public int voice(int N) {
-        resetCons();
+        //resetCons();
         return N*10;
     }
 

@@ -1,4 +1,4 @@
-package prr.tariffs;
+package prr.tariff;
 
 public class Platinum extends Tariff {
     private int _consecutive = 0;
@@ -35,12 +35,12 @@ public class Platinum extends Tariff {
     }
 
     public int voice(int N) {
-        resetCons();
+        //resetCons();
         return N*10;
     }
 
     public int video(int N) {
-        resetCons();
+        //resetCons();
         return N*30;
     }
 }
