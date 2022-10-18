@@ -97,21 +97,16 @@ public class Network implements Serializable {
 	// CLIENT|id|name|nif
 	public void readClient(String[] fields) {
 		checkFieldsLength(fields, 4);
-		String id = fields[1];
-		String name = fields[2];
-		int nif = Integer.parseInt(fields[3]);
-		registerClient(id, name, nif);
+		
+		registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
 	}
 
 	// terminal|id|idClient|state
 	public void readTerminal(String[] fields) {
 		checkFieldsLength(fields, 4);
-		String type = fields[0];
-		String id = fields[1];
-		String idClient = fields[2];
 
-		registerTerminal(type, id, idClient);
-		_terminals.get(id).setState(fields[3]);
+		registerTerminal(fields[0], fields[1], fields[2]);
+		_terminals.get(fields[1]).setState(fields[3]);
 	}
 
 	// FRIENDS|id|id1,...,idn
