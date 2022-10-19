@@ -32,17 +32,24 @@ public class Network implements Serializable {
         // FIXME define contructor(s)
         // FIXME define methods
 
+	public Client getClient(String id) throws Cores_UnknownClientKeyException{
+		Client client = _clients.get(id);
+		if (client == null) {
+			throw new Cores_UnknownClientKeyException(id);
+		}
+		return client;
+	}
 
 
-	public void registerClient(String id, String name, int nif) throws DuplicateClientKeyException {
+	public void registerClient(String id, String name, int nif) throws Cores_DuplicateClientKeyException {
 		if (_clients.containsKey(id)) {
-			throw new DuplicateClientKeyException(id);
+			throw new Cores_DuplicateClientKeyException(id);
 		}
 		_clients.put(id, new Client(id, name, nif));
 	}
 
 	public void registerTerminal(String type, String id, String clientId) throws
-			InvalidTerminalKeyException, DuplicateTerminalKeyException, UnknownClientKeyException {
+			InvalidTerminalKeyException, DuplicateTerminalKeyException, Cores_UnknownClientKeyException {
 
 		if (_terminals.containsKey(id)) {
 			throw new DuplicateTerminalKeyException(id);
@@ -51,7 +58,7 @@ public class Network implements Serializable {
 			throw new InvalidTerminalKeyException(id);
 		}
 		if (!_clients.containsKey(clientId)) {
-			throw new UnknownClientKeyException(clientId);
+			throw new Cores_UnknownClientKeyException(clientId);
 		}
 
 		Terminal terminal;
@@ -105,7 +112,7 @@ public class Network implements Serializable {
 		try {
 			registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
 		}
-		catch (DuplicateClientKeyException e) {}
+		catch (Cores_DuplicateClientKeyException e) {}
 	}
 
 	// terminal|id|idClient|state
@@ -123,7 +130,7 @@ public class Network implements Serializable {
 
 		catch (DuplicateTerminalKeyException e2) {}
 
-		catch (UnknownClientKeyException e3) {}
+		catch (Cores_UnknownClientKeyException e3) {}
 
 		_terminals.get(fields[1]).setState(fields[3]);
 	}
@@ -164,18 +171,21 @@ public class Network implements Serializable {
 	}
 
 
-	public String showClient(Client client) {
+	public String showClient(String id) throws Cores_UnknownClientKeyException {
+		Client client = getClient(id);
 		return client.toString()/*  + "\n" + client.readNotifications() */;
 	}
 
 	//Function to get a string with all the clients
 	public String showAllClients() {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (Client client : _clients.values()) {
-			result += client.toString();
-			result = result.substring(0, result.length() - 1);
+			result.append(client.toString());
+			result.append(", ");
 		}
-		return result;
+		result.deleteCharAt(result.length() - 1);
+		result.deleteCharAt(result.length() - 1);
+		return result.toString();
 	}
 
 

@@ -98,7 +98,14 @@ public class Client implements Serializable/*, Iterable*/ {
 
     @Override
     public String toString() {
-        return getId() + "|" + getName() + "|" + String.valueOf(getNif()) + "|" + getType() + "|" + getNotifActive() + "|" + _terminals.size() + "|" + String.valueOf(totalPaid()) + "|" + String.valueOf(totalOwed());
+        return getId() + "|" +
+                getName() + "|" +
+                getNif() + "|" +
+                getType() + "|" +
+                getNotifActive() + "|" +
+                _terminals.size() + "|" +
+                totalPaid() + "|" +
+                totalOwed();
     }
 
     /* public String readNotifications() {

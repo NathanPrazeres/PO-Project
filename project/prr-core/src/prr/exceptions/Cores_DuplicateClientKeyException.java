@@ -1,12 +1,12 @@
 package prr.exceptions;
 
-public class DuplicateClientKeyException extends Exception {
+public class Cores_DuplicateClientKeyException extends Exception {
 
 private static final long serialVersionUID = 202218101408L;
 
 private final String key;
 
-public DuplicateClientKeyException(String key) {
+public Cores_DuplicateClientKeyException(String key) {
     this.key = key;
 }
 
