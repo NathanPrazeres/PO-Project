@@ -209,10 +209,28 @@ public class Network implements Serializable {
 				result.append("|");
 				for (Terminal friend : terminal.getFriends()) {
 					result.append(friend.getId());
-					result.append(", ");
+					result.append(",");
 				}
 				result.deleteCharAt(result.length() - 1);
-				result.deleteCharAt(result.length() - 1);
+			}
+		}
+		return result.toString();
+	}
+
+	public String showUnusedTerminals() {
+		StringBuilder result = new StringBuilder();
+		for (Terminal terminal : _terminals.values()) {
+			//order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
+			if (!terminal.getUsed()) {
+				result.append(terminal.toString());
+				if (terminal.getFriends().size() > 0) {
+					result.append("|");
+					for (Terminal friend : terminal.getFriends()) {
+						result.append(friend.getId());
+						result.append(",");
+					}
+					result.deleteCharAt(result.length() - 1);
+				}
 			}
 		}
 		return result.toString();

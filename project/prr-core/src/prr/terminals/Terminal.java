@@ -1,15 +1,11 @@
 package prr.terminals;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
-
-
-import prr.clients.Client;
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -28,6 +24,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     private Map<String, Terminal> _friends = new TreeMap<>();
     private List<Integer> _paid = new ArrayList<>();
     private List<Integer> _owed = new ArrayList<>();
+
+    private boolean _used = false;
     /* private List<Communication> _receivedCommunications = new ArrayList<>();
     private List<Communication> _sentCommunications = new ArrayList<>(); */
 
@@ -49,7 +47,6 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         return getType() + "|" + getId() + "|" + getClientId() + "|" + 
             getState() + "|" + getBalancePaid() + "|" + getBalanceOwed();
     }
-
     public String getId() {
         return _id;
     }
@@ -65,6 +62,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     public Collection<Terminal> getFriends() {
         return _friends.values();
     }
+
+    public boolean getUsed() { return _used; }
 
     public void addFriend(Terminal friend) {
         _friends.put(friend.getId(), friend);
