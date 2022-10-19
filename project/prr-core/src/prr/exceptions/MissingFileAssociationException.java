@@ -1,8 +1,13 @@
 package prr.exceptions;
 
-/** Thrown when an application is not associated with a file. */
+import java.io.Serial;
+
 public class MissingFileAssociationException extends Exception {
 
-	private static final long serialVersionUID = 202208091753L;
+	/**
+	 * Serial number for serialization.
+	 */
+	@Serial
+	private static final long serialVersionUID = 202210192105L;
 
 }

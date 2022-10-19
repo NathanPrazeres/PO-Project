@@ -53,30 +53,20 @@ public class NetworkManager {
 		}
 	}
 
-	/**
-         * Saves the serialized application's state into the file associated to the current network.
-         *
-	 * @throws FileNotFoundException if for some reason the file cannot be created or opened. 
-	 * @throws MissingFileAssociationException if the current network does not have a file.
-	 * @throws IOException if there is some error while serializing the state of the network to disk.
-	 */
-	public void save() throws IOException {
-			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
-			oos.writeObject(_network);
-			oos.close();
+
+	public void save() throws IOException, MissingFileAssociationException {
+
+		if (_filename == null || _filename.isBlank()) {
+			throw new MissingFileAssociationException();
+		}
+
+		ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+		oos.writeObject(_network);
+		oos.close();
 	}
 
-	/**
-         * Saves the serialized application's state into the specified file. The current network is
-         * associated to this file.
-         *
-	 * @param filename the name of the file.
-	 * @throws FileNotFoundException if for some reason the file cannot be created or opened.
-	 * @throws MissingFileAssociationException if the current network does not have a file.
-	 * @throws IOException if there is some error while serializing the state of the network to disk.
-	 */
-	public void saveAs(String filename) throws IOException {
-			ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+
+	public void saveAs(String filename) throws IOException, MissingFileAssociationException {
 			_filename = filename;
 			save();
 	}
