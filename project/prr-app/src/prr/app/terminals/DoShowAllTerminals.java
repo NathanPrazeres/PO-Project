@@ -1,7 +1,5 @@
 package prr.app.terminals;
 
-import java.util.Collections;
-
 import prr.Network;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
@@ -17,8 +15,6 @@ class DoShowAllTerminals extends Command<Network> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		final String terminals = _receiver.showAllTerminals();
-		_display.add(terminals);
-		_display.display();
+		_display.popup(_receiver.showAllTerminals());
 	}
 }

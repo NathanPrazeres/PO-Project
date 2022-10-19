@@ -194,18 +194,20 @@ public class Network implements Serializable {
 
 	//Function to get a string with all the terminals
 	public String showAllTerminals() {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (Terminal terminal : _terminals.values()) {
 		//order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
-			result += terminal.toString();
+			result.append(terminal.toString());
 			if (terminal.getFriends().size() > 0) {
-				result += "|";
+				result.append("|");
 				for (Terminal friend : terminal.getFriends()) {
-					result += friend.getId() + ",";
+					result.append(friend.getId());
+					result.append(", ");
 				}
+				result.deleteCharAt(result.length() - 1);
+				result.deleteCharAt(result.length() - 1);
 			}
-			result = result.substring(0, result.length() - 1);
 		}
-		return result;
+		return result.toString();
 	}
 }
