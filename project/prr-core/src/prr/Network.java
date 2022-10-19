@@ -49,14 +49,16 @@ public class Network implements Serializable {
 	}
 
 	public void registerTerminal(String type, String id, String clientId) throws
-			InvalidTerminalKeyException, DuplicateTerminalKeyException, Cores_UnknownClientKeyException {
+			Cores_InvalidTerminalKeyException, Cores_DuplicateTerminalKeyException, Cores_UnknownClientKeyException {
 
 		if (_terminals.containsKey(id)) {
-			throw new DuplicateTerminalKeyException(id);
+			throw new Cores_DuplicateTerminalKeyException(id);
 		}
+
 		if (id.length() != 6 || !id.matches("[^0-9]+")) {
-			throw new InvalidTerminalKeyException(id);
+			throw new Cores_InvalidTerminalKeyException(id);
 		}
+
 		if (!_clients.containsKey(clientId)) {
 			throw new Cores_UnknownClientKeyException(clientId);
 		}
@@ -126,9 +128,9 @@ public class Network implements Serializable {
 			registerTerminal(fields[0], fields[1], fields[2]);
 		}
 
-		catch (InvalidTerminalKeyException e1) {}
+		catch (Cores_InvalidTerminalKeyException e1) {}
 
-		catch (DuplicateTerminalKeyException e2) {}
+		catch (Cores_DuplicateTerminalKeyException e2) {}
 
 		catch (Cores_UnknownClientKeyException e3) {}
 

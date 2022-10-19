@@ -1,12 +1,15 @@
 package prr.app.terminals;
 
 import prr.Network;
-import prr.exceptions.DuplicateTerminalKeyException;
-import prr.exceptions.InvalidTerminalKeyException;
+import prr.app.exceptions.DuplicateTerminalKeyException;
+import prr.app.exceptions.InvalidTerminalKeyException;
+import prr.app.exceptions.UnknownClientKeyException;
+import prr.exceptions.Cores_DuplicateTerminalKeyException;
+import prr.exceptions.Cores_InvalidTerminalKeyException;
 import prr.exceptions.Cores_UnknownClientKeyException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME add more imports if needed
+
 
 /**
  * Register terminal.
@@ -15,9 +18,9 @@ class DoRegisterTerminal extends Command<Network> {
 
 	DoRegisterTerminal(Network receiver) {
 		super(Label.REGISTER_TERMINAL, receiver);
-		addStringField("terminalId", Prompt.terminalKey());
+		addStringField("terminalKey", Prompt.terminalKey());
 		addOptionField("terminalType", Prompt.terminalType(), "BASIC", "FANCY");
-		addStringField("clientId", Prompt.clientKey());
+		addStringField("clientKey", Prompt.clientKey());
 	}
 
 	@Override
@@ -25,12 +28,18 @@ class DoRegisterTerminal extends Command<Network> {
         try {
 			_receiver.registerTerminal(
 					optionField("terminalType"),
-					stringField("terminalId"),
-					stringField("clientId"));
+					stringField("terminalKey"),
+					stringField("clientKey"));
 		}
 
-		catch (DuplicateTerminalKeyException | InvalidTerminalKeyException | Cores_UnknownClientKeyException e) {}
-
-
+		catch (Cores_DuplicateTerminalKeyException e) {
+			throw new DuplicateTerminalKeyException(stringField("terminalKey"));
+		}
+		catch (Cores_InvalidTerminalKeyException e) {
+			throw new InvalidTerminalKeyException(stringField("terminalKey"));
+		}
+		catch (Cores_UnknownClientKeyException e) {
+			throw new UnknownClientKeyException(stringField("clientKey"));
+		}
 	}
 }
