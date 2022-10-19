@@ -40,6 +40,13 @@ public class Network implements Serializable {
 		return client;
 	}
 
+	public Terminal getTerminal(String id) throws Cores_UnknownTerminalKeyException{
+		Terminal terminal = _terminals.get(id);
+		if (terminal == null) {
+			throw new Cores_UnknownTerminalKeyException(id);
+		}
+		return terminal;
+	}
 
 	public void registerClient(String id, String name, int nif) throws Cores_DuplicateClientKeyException {
 		if (_clients.containsKey(id)) {
