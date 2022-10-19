@@ -43,6 +43,7 @@ public class Network implements Serializable {
 
 	public void registerTerminal(String type, String id, String clientId) throws
 			InvalidTerminalKeyException, DuplicateTerminalKeyException, UnknownClientKeyException {
+
 		if (_terminals.containsKey(id)) {
 			throw new DuplicateTerminalKeyException(id);
 		}
@@ -52,6 +53,7 @@ public class Network implements Serializable {
 		if (!_clients.containsKey(clientId)) {
 			throw new UnknownClientKeyException(clientId);
 		}
+
 		Terminal terminal;
 		if (type.equals("BASIC")) {
 			terminal = new Basic(id, clientId);
@@ -59,6 +61,7 @@ public class Network implements Serializable {
 		else {
 			terminal = new Fancy(id, clientId);
 		}
+
 		_terminals.put(id, terminal);
 		_clients.get(clientId).addTerminal(terminal);
 	}
@@ -85,7 +88,7 @@ public class Network implements Serializable {
 		}
     }
 
-	public void readLine(String line) throws UnrecognizedEntryException, UnknownTerminalKeyException, DuplicateTerminalKeyException, InvalidTerminalKeyException, UnknownClientKeyException {
+	public void readLine(String line) throws UnrecognizedEntryException {
 		String[] fields = line.split("\\|");
 		switch(fields[0]) {
 			case "CLIENT" -> readClient(fields);
@@ -96,7 +99,7 @@ public class Network implements Serializable {
 	}
 
 	// CLIENT|id|name|nif
-	public void readClient(String[] fields) throws UnrecognizedEntryException {
+	public void readClient(String[] fields) {
 		try {
 			checkFieldsLength(fields, 4);
 		}
@@ -109,16 +112,33 @@ public class Network implements Serializable {
 	}
 
 	// terminal|id|idClient|state
-	public void readTerminal(String[] fields) throws UnrecognizedEntryException, DuplicateTerminalKeyException, InvalidTerminalKeyException, UnknownClientKeyException {
-		checkFieldsLength(fields, 4);
+	public void readTerminal(String[] fields) {
+		try {
+			checkFieldsLength(fields, 4);
+		}
+		catch (UnrecognizedEntryException e) {}
 
-		registerTerminal(fields[0], fields[1], fields[2]);
+		try {
+			registerTerminal(fields[0], fields[1], fields[2]);
+		}
+
+		catch (InvalidTerminalKeyException e) {}
+
+		catch (DuplicateTerminalKeyException e) {}
+
+		catch (UnknownClientKeyException e) {}
+
 		_terminals.get(fields[1]).setState(fields[3]);
 	}
 
 	// FRIENDS|id|id1,...,idn
-	public void readFriends(String[] fields) throws UnknownTerminalKeyException, UnrecognizedEntryException {
-		checkFieldsLength(fields, 3);
+	public void readFriends(String[] fields) throws UnrecognizedEntryException {
+		try {
+			checkFieldsLength(fields, 3);
+		}
+
+		catch (UnrecognizedEntryException e) {}
+
 		try {
 			String id = fields[1];
 			String[] friends = fields[2].split(",");
