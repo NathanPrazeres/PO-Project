@@ -30,5 +30,4 @@ class DoRegisterClient extends Command<Network> {
 			throw new DuplicateClientKeyException(stringField("clientId"));
 		}
 	}
-
 }

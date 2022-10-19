@@ -3,7 +3,7 @@ package prr.app.terminals;
 import prr.Network;
 import prr.exceptions.DuplicateTerminalKeyException;
 import prr.exceptions.InvalidTerminalKeyException;
-import prr.exceptions.UnknownClientKeyException;
+import prr.exceptions.Cores_UnknownClientKeyException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
@@ -29,7 +29,7 @@ class DoRegisterTerminal extends Command<Network> {
 					stringField("clientId"));
 		}
 
-		catch (DuplicateTerminalKeyException | InvalidTerminalKeyException | UnknownClientKeyException e) {}
+		catch (DuplicateTerminalKeyException | InvalidTerminalKeyException | Cores_UnknownClientKeyException e) {}
 
 
 	}
