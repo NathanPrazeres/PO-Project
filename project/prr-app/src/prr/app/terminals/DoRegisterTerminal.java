@@ -1,9 +1,9 @@
 package prr.app.terminals;
 
 import prr.Network;
-import prr.app.exceptions.DuplicateTerminalKeyException;
-import prr.app.exceptions.InvalidTerminalKeyException;
-import prr.app.exceptions.UnknownClientKeyException;
+import prr.exceptions.DuplicateTerminalKeyException;
+import prr.exceptions.InvalidTerminalKeyException;
+import prr.exceptions.UnknownClientKeyException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME add more imports if needed
@@ -15,16 +15,22 @@ class DoRegisterTerminal extends Command<Network> {
 
 	DoRegisterTerminal(Network receiver) {
 		super(Label.REGISTER_TERMINAL, receiver);
-		addStringField("terminalId", Prompt.terminalId());
-		addOptionalField("terminalType", Prompt.terminalType(), "BASIC", "FANCY");
-		addStringField("clientId", Prompt.clientId());
+		addStringField("terminalId", Prompt.terminalKey());
+		addOptionField("terminalType", Prompt.terminalType(), "BASIC", "FANCY");
+		addStringField("clientId", Prompt.clientKey());
 	}
 
 	@Override
 	protected final void execute() throws CommandException {
-        _receiver.registerTerminal(
-			optionalField("terminalType"),
-			stringField("terminalId"),
-			stringField("clientId"));
+        try {
+			_receiver.registerTerminal(
+					optionField("terminalType"),
+					stringField("terminalId"),
+					stringField("clientId"));
+		}
+
+		catch (DuplicateTerminalKeyException | InvalidTerminalKeyException | UnknownClientKeyException e) {}
+
+
 	}
 }

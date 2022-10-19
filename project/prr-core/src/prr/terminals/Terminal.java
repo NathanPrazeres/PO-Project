@@ -110,6 +110,8 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
         **/
     public abstract boolean canStartCommunication();
 
+    public abstract boolean canEndCurrentCommunication();
+
     public void updateBalance() {
         int newBalance = 0;
         for (Integer p: _paid) {
@@ -141,6 +143,5 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     public void busy() {
         setState("BUSY");
     }
-
 
 }

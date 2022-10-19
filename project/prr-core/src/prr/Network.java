@@ -73,7 +73,7 @@ public class Network implements Serializable {
      * @throws UnrecognizedEntryException if some entry is not correct
 	 * @throws IOException if there is an IO erro while processing the text file
 	 */
-	void importFile(String filename) throws UnrecognizedEntryException, IOException, ClassNotFoundException  {
+	void importFile(String filename) throws UnrecognizedEntryException, IOException  {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -83,10 +83,7 @@ public class Network implements Serializable {
 		catch (IOException e) {
 			throw new IOException(filename);
 		}
-		catch (ClassNotFoundException e) {
-			throw new ClassNotFoundException(filename);
-		}
-    }
+	}
 
 	public void readLine(String line) throws UnrecognizedEntryException {
 		String[] fields = line.split("\\|");
@@ -122,11 +119,11 @@ public class Network implements Serializable {
 			registerTerminal(fields[0], fields[1], fields[2]);
 		}
 
-		catch (InvalidTerminalKeyException e) {}
+		catch (InvalidTerminalKeyException e1) {}
 
-		catch (DuplicateTerminalKeyException e) {}
+		catch (DuplicateTerminalKeyException e2) {}
 
-		catch (UnknownClientKeyException e) {}
+		catch (UnknownClientKeyException e3) {}
 
 		_terminals.get(fields[1]).setState(fields[3]);
 	}

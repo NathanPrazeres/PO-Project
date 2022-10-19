@@ -60,18 +60,10 @@ public class NetworkManager {
 	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
-		try {
+	public void save() throws IOException {
 			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
 			oos.writeObject(_network);
 			oos.close();
-		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException();
-		} catch (MissingFileAssociationException e) {
-			throw new MissingFileAssociationException();
-		} catch (IOException e) {
-			throw new IOException();
-		}
 	}
 
 	/**
@@ -83,19 +75,10 @@ public class NetworkManager {
 	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-		try {
+	public void saveAs(String filename) throws IOException {
 			ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
-			oos.writeObject(_network);
 			_filename = filename;
-			oos.close();
-		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException();
-		} catch (MissingFileAssociationException e) {
-			throw new MissingFileAssociationException();
-		} catch (IOException e) {
-			throw new IOException();
-		}
+			save();
 	}
 
 	/**

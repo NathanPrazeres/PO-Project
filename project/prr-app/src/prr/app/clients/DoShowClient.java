@@ -13,7 +13,7 @@ class DoShowClient extends Command<Network> {
 
 	DoShowClient(Network receiver) {
 		super(Label.SHOW_CLIENT, receiver);
-		addStringField("clientId", Prompt.clientId());
+		addStringField("clientId", Prompt.key());
 	}
 
 	@Override

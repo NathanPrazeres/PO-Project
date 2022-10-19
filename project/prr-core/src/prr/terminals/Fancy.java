@@ -15,4 +15,7 @@ public class Fancy extends Terminal {
     public boolean canStartCommunication() {
         return true;
     }
+
+    @Override
+    public boolean canEndCurrentCommunication() { return false; }
 }
