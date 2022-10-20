@@ -2,7 +2,9 @@ package prr.clients;
 
 import prr.terminals.Terminal;
 
-public class Notification {
+import java.io.Serializable;
+
+public class Notification implements Serializable {
     private String _type;
     private Terminal _idTerminal;
 

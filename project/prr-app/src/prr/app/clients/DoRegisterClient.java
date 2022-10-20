@@ -27,7 +27,7 @@ class DoRegisterClient extends Command<Network> {
 					stringField("clientName"),
 					integerField("nif"));
 		} catch (Cores_DuplicateClientKeyException e) {
-			throw new DuplicateClientKeyException(stringField("clientId"));
+			throw new DuplicateClientKeyException(stringField("clientKey"));
 		}
 	}
 }

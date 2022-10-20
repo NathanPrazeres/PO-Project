@@ -1,6 +1,8 @@
 package prr.tariff;
 
-public abstract class Tariff {
+import java.io.Serializable;
+
+public abstract class Tariff implements Serializable {
     private boolean _ready = false;
 
     public abstract int text(int N);

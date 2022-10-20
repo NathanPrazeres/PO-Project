@@ -39,13 +39,9 @@ public class NetworkManager {
          *         an error while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException {
-		try {
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+		try  (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
 			_network = (Network) ois.readObject();
 			_filename = filename;
-			ois.close();
-		} catch (FileNotFoundException e) {
-			throw new UnavailableFileException(filename);
 		} catch (IOException e) {
 			throw new UnavailableFileException(filename);
 		} catch (ClassNotFoundException e) {
@@ -80,7 +76,7 @@ public class NetworkManager {
 	public void importFile(String filename) throws ImportFileException {
 		try {
             _network.importFile(filename);
-    	} catch (IOException | UnrecognizedEntryException /* FIXME maybe other exceptions */ e) {
+    	} catch (IOException | UnrecognizedEntryException  e) {
             throw new ImportFileException(filename, e);
     }
 	}

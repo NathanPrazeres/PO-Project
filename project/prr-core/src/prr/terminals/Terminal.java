@@ -44,7 +44,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     @Override
     public String toString() {
-        return getType() + "|" + getId() + "|" + getClientId() + "|" + 
+        return "TERMINAL" + "|" + getType() + "|" + getId() + "|" + getClientId() + "|" +
             getState() + "|" + getBalancePaid() + "|" + getBalanceOwed();
     }
     public String getId() {

@@ -98,7 +98,8 @@ public class Client implements Serializable/*, Iterable*/ {
 
     @Override
     public String toString() {
-        return getId() + "|" +
+        return "CLIENT" + "|" +
+                getId() + "|" +
                 getName() + "|" +
                 getNif() + "|" +
                 getType() + "|" +

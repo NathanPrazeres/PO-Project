@@ -3,7 +3,6 @@ package prr;
 import java.io.Serializable;
 import java.io.IOException;
 
-import prr.app.exceptions.UnknownTerminalKeyException;
 import prr.clients.Client;
 import prr.exceptions.*;
 import prr.terminals.Basic;
@@ -96,9 +95,6 @@ public class Network implements Serializable {
 				readLine(line);
 			}
 		}
-		catch (IOException e) {
-			throw new IOException(filename);
-		}
 	}
 
 	public void readLine(String line) throws UnrecognizedEntryException {
@@ -112,55 +108,58 @@ public class Network implements Serializable {
 	}
 
 	// CLIENT|id|name|nif
-	public void readClient(String[] fields) {
-		try {
-			checkFieldsLength(fields, 4);
+	public void readClient(String[] fields) throws UnrecognizedEntryException {
+		if (!checkFieldsLength(fields, 4)) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
-		catch (UnrecognizedEntryException e) {}
 
 		try {
 			registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
 		}
-		catch (Cores_DuplicateClientKeyException e) {}
+		catch (Cores_DuplicateClientKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		}
 	}
 
 	// terminal|id|idClient|state
-	public void readTerminal(String[] fields) {
-		try {
-			checkFieldsLength(fields, 4);
+	public void readTerminal(String[] fields) throws UnrecognizedEntryException {
+		if (!checkFieldsLength(fields, 4)) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
-		catch (UnrecognizedEntryException e) {}
 
 		try {
 			registerTerminal(fields[0], fields[1], fields[2]);
 		}
+		catch (Cores_InvalidTerminalKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		}
 
-		catch (Cores_InvalidTerminalKeyException e1) {}
+		catch (Cores_DuplicateTerminalKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		}
 
-		catch (Cores_DuplicateTerminalKeyException e2) {}
-
-		catch (Cores_UnknownClientKeyException e3) {}
+		catch (Cores_UnknownClientKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		}
 
 		_terminals.get(fields[1]).setState(fields[3]);
 	}
 
 	// FRIENDS|id|id1,...,idn
 	public void readFriends(String[] fields) throws UnrecognizedEntryException {
-		try {
-			checkFieldsLength(fields, 3);
+		if (!checkFieldsLength(fields, 3)) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
-
-		catch (UnrecognizedEntryException e) {}
 
 		try {
 			String id = fields[1];
 			String[] friends = fields[2].split(",");
 			if (!_terminals.containsKey(id)) {
-				throw new UnknownTerminalKeyException(id);
+				throw new Cores_UnknownTerminalKeyException(id);
 			}
 			for (String friend : friends) {
 				if (!_terminals.containsKey(friend)) {
-					throw new UnknownTerminalKeyException(friend);
+					throw new Cores_UnknownTerminalKeyException(friend);
 				}
 				else {
 					_terminals.get(id).addFriend(_terminals.get(friend));
@@ -168,15 +167,13 @@ public class Network implements Serializable {
 				}
 			}
 		}
-		catch (UnknownTerminalKeyException e) {
+		catch (Cores_UnknownTerminalKeyException e) {
 			throw new UnrecognizedEntryException(Arrays.toString(fields));
 		}
 	}
 
-	public void checkFieldsLength(String[] fields, int length) throws UnrecognizedEntryException {
-		if (fields.length != length) {
-			throw new UnrecognizedEntryException(Arrays.toString(fields));
-		}
+	public boolean checkFieldsLength(String[] fields, int length) {
+		return fields.length == length;
 	}
 
 
