@@ -7,6 +7,7 @@ import prr.app.exceptions.UnknownClientKeyException;
 import prr.exceptions.Cores_DuplicateTerminalKeyException;
 import prr.exceptions.Cores_InvalidTerminalKeyException;
 import prr.exceptions.Cores_UnknownClientKeyException;
+import prr.exceptions.Cores_UnknownTerminalStateException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
@@ -42,5 +43,6 @@ class DoRegisterTerminal extends Command<Network> {
 		catch (Cores_UnknownClientKeyException e) {
 			throw new UnknownClientKeyException(stringField("clientKey"));
 		}
+		catch (Cores_UnknownTerminalStateException e) {}
 	}
 }

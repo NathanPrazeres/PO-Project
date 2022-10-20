@@ -1,11 +1,7 @@
 package prr.terminals;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 // FIXME add more import if needed (cannot import from pt.tecnico or prr.app)
 
@@ -44,7 +40,7 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
 
     @Override
     public String toString() {
-        return "TERMINAL" + "|" + getType() + "|" + getId() + "|" + getClientId() + "|" +
+        return getType() + "|" + getId() + "|" + getClientId() + "|" +
             getState() + "|" + getBalancePaid() + "|" + getBalanceOwed();
     }
     public String getId() {
@@ -90,6 +86,9 @@ abstract public class Terminal implements Serializable /* FIXME maybe addd more 
     }
 
     public void setState(String state) {
+        if (Objects.equals(state, "ON")) {
+            state = "IDLE";
+        }
         _state = state;
     }
 

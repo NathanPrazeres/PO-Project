@@ -55,7 +55,8 @@ public class Network implements Serializable {
 	}
 
 	public void registerTerminal(String type, String id, String clientId, String state) throws
-			Cores_InvalidTerminalKeyException, Cores_DuplicateTerminalKeyException, Cores_UnknownClientKeyException {
+			Cores_InvalidTerminalKeyException, Cores_DuplicateTerminalKeyException, Cores_UnknownClientKeyException,
+			Cores_UnknownTerminalStateException {
 
 		if (_terminals.containsKey(id)) {
 			throw new Cores_DuplicateTerminalKeyException(id);
@@ -77,7 +78,10 @@ public class Network implements Serializable {
 			terminal = new Fancy(id, clientId);
 		}
 
-		terminal.setState(state);
+		switch (state){
+			case "IDLE", "ON", "OFF", "SILENCE", "BUSY" -> terminal.setState(state);
+			default -> throw new Cores_UnknownTerminalStateException(state);
+		}
 
 		_terminals.put(id, terminal);
 		_clients.get(clientId).addTerminal(terminal);
@@ -142,6 +146,8 @@ public class Network implements Serializable {
 			throw new UnrecognizedEntryException(String.join("|", fields));
 		} catch (Cores_UnknownClientKeyException e) {
 			throw new UnrecognizedEntryException(String.join("|", fields));
+		} catch (Cores_UnknownTerminalStateException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
 	}
 
@@ -165,9 +171,8 @@ public class Network implements Serializable {
 		StringBuilder result = new StringBuilder();
 		for (Client client : _clients.values()) {
 			result.append(client.toString());
-			result.append(", ");
+			result.append("\n");
 		}
-		result.deleteCharAt(result.length() - 1);
 		result.deleteCharAt(result.length() - 1);
 		return result.toString();
 	}
@@ -180,6 +185,7 @@ public class Network implements Serializable {
 		for (Terminal terminal : _terminals.values()) {
 		//order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
 			result.append(terminal.toString());
+			result.append("\n");
 			if (terminal.getFriends().size() > 0) {
 				result.append("|");
 				for (Terminal friend : terminal.getFriends()) {
@@ -188,6 +194,9 @@ public class Network implements Serializable {
 				}
 				result.deleteCharAt(result.length() - 1);
 			}
+		}
+		if (!result.isEmpty()) {
+			result.deleteCharAt(result.length() - 1);
 		}
 		return result.toString();
 	}
@@ -198,6 +207,7 @@ public class Network implements Serializable {
 			//order terminalType|terminalId|clientId|terminalStatus|balance-paid|balance-debts|friend1,...,friendn
 			if (!terminal.getUsed()) {
 				result.append(terminal.toString());
+				result.append("\n");
 				if (terminal.getFriends().size() > 0) {
 					result.append("|");
 					for (Terminal friend : terminal.getFriends()) {
@@ -207,6 +217,9 @@ public class Network implements Serializable {
 					result.deleteCharAt(result.length() - 1);
 				}
 			}
+		}
+		if (!result.isEmpty()) {
+			result.deleteCharAt(result.length() - 1);
 		}
 		return result.toString();
 	}
