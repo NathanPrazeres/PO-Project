@@ -29,7 +29,8 @@ class DoRegisterTerminal extends Command<Network> {
 			_receiver.registerTerminal(
 					optionField("terminalType"),
 					stringField("terminalKey"),
-					stringField("clientKey"));
+					stringField("clientKey"),
+					"IDLE");
 		}
 
 		catch (Cores_DuplicateTerminalKeyException e) {

@@ -54,14 +54,14 @@ public class Network implements Serializable {
 		_clients.put(id, new Client(id, name, nif));
 	}
 
-	public void registerTerminal(String type, String id, String clientId) throws
+	public void registerTerminal(String type, String id, String clientId, String state) throws
 			Cores_InvalidTerminalKeyException, Cores_DuplicateTerminalKeyException, Cores_UnknownClientKeyException {
 
 		if (_terminals.containsKey(id)) {
 			throw new Cores_DuplicateTerminalKeyException(id);
 		}
 
-		if (id.length() != 6 || !id.matches("[^0-9]+")) {
+		if (id.length() != 6 || !id.matches("[0-9]+")) {
 			throw new Cores_InvalidTerminalKeyException(id);
 		}
 
@@ -77,8 +77,24 @@ public class Network implements Serializable {
 			terminal = new Fancy(id, clientId);
 		}
 
+		terminal.setState(state);
+
 		_terminals.put(id, terminal);
 		_clients.get(clientId).addTerminal(terminal);
+	}
+
+	public void registerFriends(String id, String friends) throws Cores_UnknownTerminalKeyException{
+		if (!_terminals.containsKey(id)) {
+			throw new Cores_UnknownTerminalKeyException(id);
+		}
+		String[] friendsList = friends.split(",");
+		for (String friend : friendsList) {
+			if (!_terminals.containsKey(friend)) {
+				throw new Cores_UnknownTerminalKeyException(friend);
+			}
+			_terminals.get(id).addFriend(_terminals.get(friend));
+			_terminals.get(friend).addFriend(_terminals.get(id));
+		}
 	}
 
 	/**
@@ -109,71 +125,33 @@ public class Network implements Serializable {
 
 	// CLIENT|id|name|nif
 	public void readClient(String[] fields) throws UnrecognizedEntryException {
-		if (!checkFieldsLength(fields, 4)) {
-			throw new UnrecognizedEntryException(String.join("|", fields));
-		}
-
 		try {
 			registerClient(fields[1], fields[2], Integer.parseInt(fields[3]));
-		}
-		catch (Cores_DuplicateClientKeyException e) {
+		} catch (Cores_DuplicateClientKeyException e) {
 			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
 	}
 
 	// terminal|id|idClient|state
 	public void readTerminal(String[] fields) throws UnrecognizedEntryException {
-		if (!checkFieldsLength(fields, 4)) {
-			throw new UnrecognizedEntryException(String.join("|", fields));
-		}
-
 		try {
-			registerTerminal(fields[0], fields[1], fields[2]);
-		}
-		catch (Cores_InvalidTerminalKeyException e) {
+			registerTerminal(fields[0], fields[1], fields[2], fields[3]);
+		} catch (Cores_InvalidTerminalKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		} catch (Cores_DuplicateTerminalKeyException e) {
+			throw new UnrecognizedEntryException(String.join("|", fields));
+		} catch (Cores_UnknownClientKeyException e) {
 			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
-
-		catch (Cores_DuplicateTerminalKeyException e) {
-			throw new UnrecognizedEntryException(String.join("|", fields));
-		}
-
-		catch (Cores_UnknownClientKeyException e) {
-			throw new UnrecognizedEntryException(String.join("|", fields));
-		}
-
-		_terminals.get(fields[1]).setState(fields[3]);
 	}
 
 	// FRIENDS|id|id1,...,idn
 	public void readFriends(String[] fields) throws UnrecognizedEntryException {
-		if (!checkFieldsLength(fields, 3)) {
+		try {
+			registerFriends(fields[1], fields[2]);
+		} catch (Cores_UnknownTerminalKeyException e) {
 			throw new UnrecognizedEntryException(String.join("|", fields));
 		}
-
-		try {
-			String id = fields[1];
-			String[] friends = fields[2].split(",");
-			if (!_terminals.containsKey(id)) {
-				throw new Cores_UnknownTerminalKeyException(id);
-			}
-			for (String friend : friends) {
-				if (!_terminals.containsKey(friend)) {
-					throw new Cores_UnknownTerminalKeyException(friend);
-				}
-				else {
-					_terminals.get(id).addFriend(_terminals.get(friend));
-					_terminals.get(friend).addFriend(_terminals.get(id));
-				}
-			}
-		}
-		catch (Cores_UnknownTerminalKeyException e) {
-			throw new UnrecognizedEntryException(Arrays.toString(fields));
-		}
-	}
-
-	public boolean checkFieldsLength(String[] fields, int length) {
-		return fields.length == length;
 	}
 
 

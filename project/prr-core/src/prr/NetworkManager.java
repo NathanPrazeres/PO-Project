@@ -78,7 +78,7 @@ public class NetworkManager {
             _network.importFile(filename);
     	} catch (IOException | UnrecognizedEntryException  e) {
             throw new ImportFileException(filename, e);
-    }
+		}
 	}
 
 }
