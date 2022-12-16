@@ -1,0 +1,27 @@
+/Cores_DuplicateClientKeyException.java/1.1/Thu Oct 20 13:09:03 2022//
+/Cores_DuplicateTerminalKeyException.java/1.1/Thu Oct 20 13:09:03 2022//
+/Cores_InvalidTerminalKeyException.java/1.1/Thu Oct 20 13:09:03 2022//
+/Cores_UnknownClientKeyException.java/1.1/Thu Oct 20 13:09:03 2022//
+/Cores_UnknownTerminalKeyException.java/1.1/Thu Oct 20 13:09:03 2022//
+/Cores_UnknownTerminalStateException.java/1.1/Thu Oct 20 13:09:03 2022//
+/ImportFileException.java/1.1/Wed Sep 14 16:51:38 2022//
+/MissingFileAssociationException.java/1.2/Thu Oct 20 13:09:04 2022//
+/UnavailableFileException.java/1.2/Sat Oct  1 17:34:11 2022//
+/UnrecognizedEntryException.java/1.2/Wed Sep 14 17:39:54 2022//
+/Cores_RepeatedFriendException.java/1.1/Tue Nov  1 15:30:33 2022//
+/Cores_UnavailableTerminalException.java/1.1/Sun Oct 30 21:34:47 2022//
+/Cores_UnknownFriendException.java/1.1/Tue Nov  1 15:44:10 2022//
+/Cores_ClientNotificationsAlreadyDisabledException.java/1.1/Wed Nov  2 11:34:23 2022//
+/Cores_ClientNotificationsAlreadyEnabledException.java/1.1/Wed Nov  2 11:43:51 2022//
+/Cores_DestinationIsBusy.java/1.1/Wed Nov  2 15:26:41 2022//
+/Cores_DestinationIsOff.java/1.1/Wed Nov  2 15:26:05 2022//
+/Cores_DestinationIsSilent.java/1.1/Wed Nov  2 15:27:43 2022//
+/Cores_UnsupportedAtDestination.java/1.1/Wed Nov  2 15:24:35 2022//
+/Cores_UnsupportedAtOrigin.java/1.1/Wed Nov  2 15:23:34 2022//
+/Cores_AlreadyOffException.java/1.2/Wed Nov  2 22:52:01 2022//
+/Cores_AlreadyOnException.java/1.2/Wed Nov  2 22:51:36 2022//
+/Cores_AlreadySilenceException.java/1.2/Wed Nov  2 22:51:27 2022//
+/Cores_InvalidCommunicationException.java/1.1/Wed Nov  2 23:42:22 2022//
+/Cores_NoOngoingCommunication.java/1.2/Wed Nov  2 22:55:19 2022//
+/Cores_UnknownCommunicationKeyException.java/1.2/Wed Nov  2 23:45:36 2022//
+D
